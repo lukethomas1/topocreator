@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+<head>
+<!-- Bootstrap -->
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+
+<!-- Local CSS Styling -->
+<link rel="stylesheet" href="./index.css">
+
+<!-- Jquery -->
+<script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
+
+<!-- Local JavaScript -->
+<script src="./index.js"></script>
+<script src="./objects.js"></script>
+
+<!-- Vis.js Graphing Library -->
+<script
+src="https://cdnjs.cloudflare.com/ajax/libs/vis/4.18.1/vis.min.js"></script>
+
+<!-- Vis.js CSS -->
+<script
+src="https://cdnjs.cloudflare.com/ajax/libs/vis/4.18.1/vis.min.css"
+rel="stylesheet" type="text/css"></script>
+
+<title>GrapeVine</title>
+</head>
+
+<body>
+<textarea id="export-textarea" placeholder="Import/Export text goes here">
+</textarea>
+
+<div id="buttons">
+  <button id="add-button" class="btn btn-primary">Add</button>
+  <button id="import-button" class="btn btn-warning">Import</button>
+  <button id="export-button" class="btn btn-warning">Export</button>
+</div>
+
+<div id="add-container" hidden>
+  <div id="add-subnet-form" class="add-form">
+    <h1>Add a New Subnet</h1>
+    <input id="input-subnet-name" class="form-control" placeholder="Subnet Name">
+    <input id="input-subnet-ssid" class="form-control" placeholder="SSID (optional)">
+    <input id="input-subnet-addr" class="form-control" placeholder="Address (optional)">
+    
+    <div id="subnet-add-member" class="input-append">
+      <input id="subnet-member-input" class="form-control span2" placeholder="Member (optional)">
+      <button id="subnet-add-member-button" class="btn">+</button>
+    </div>
+    <div id="subnet-members"></div>
+
+    <button id="save-subnet-button" class="btn btn-primary">Save</button>
+  </div>
+
+  <div id="add-node-form" class="add-form">
+    <h1>Add a New Node</h1>
+
+    <!-- Dropdown for node type selection -->
+    <div id="node-type-dropdown" class="form-control dropdown">
+      <div id="node-type-label">Node Type<span class="caret"></span></div>
+      <ul class="dropdown-content">
+        <li>Pi</li>
+        <li>Radio</li>
+      </ul>
+    </div>
+
+    <input id="input-node-name" class="form-control" placeholder="Name (optional)">
+    <input id="input-node-ip" class="form-control" placeholder="IP Address (optional)">
+    <input id="input-node-mac" class="form-control" placeholder="MacAddress (optional)">
+    
+    <div id="subnet-checkboxes"></div>
+    <button id="save-node-button" class="btn btn-primary">Save</button>
+  </div>
+</div>
+
+<!-- The graph attaches to this div -->
+<div id="graph"></div>
+</body>
+</html>
