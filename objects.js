@@ -16,21 +16,24 @@ class GraphData {
         dragNodes:true,
         dragView: true,
         hover: true,
-        multiselect: true,
+        multiselect: false,
         navigationButtons: true,
         selectable: true,
-        selectConnectedEdges: true,
+        selectConnectedEdges: false,
         tooltipDelay: 300,
         zoomView: true
+      },
+      layout: {
+        improvedLayout:true,
       },
       manipulation:{
         enabled: true,
         initiallyActive: true,
         addNode: true,
-        addEdge: true,
-        editEdge: true,
+        addEdge: false,
+        editEdge: false,
         deleteNode: true,
-        deleteEdge: true,
+        deleteEdge: false,
       }
     }
   }
@@ -41,6 +44,13 @@ class GraphData {
 
   addNode(node) {
     this.nodes.update(node);
+  }
+
+  applyEventHandlers() {
+    this.network.on("selectNode", function(params) {
+      this.selectedNode = params.nodes[0];
+      changeNode();
+    });
   }
 
   connectNodeToSubnet(nodeName, subnetName) {
@@ -74,6 +84,7 @@ class GraphData {
     var container = document.getElementById(this.containerId);
     var data = {nodes: this.nodes, edges: this.edges};
     this.network = new vis.Network(container, data, this.options);
+    //this.applyEventHandlers();
   }
 
   setNodeGroup(nodeName, groupName) {
@@ -86,7 +97,7 @@ class GraphData {
   setNodeGroups(subnet) {
     var newNodes = [];
     var jankreference = this;
-    subnet.members.each(function(index, element) {
+    $.each(subnet.members, function(index, element) {
       newNodes.push({id: element, label: element, group: subnet.name});
     });
     this.nodes.update(newNodes);

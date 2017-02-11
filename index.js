@@ -1,5 +1,6 @@
 $(document).ready(function() {
   // Global variables
+  var db = firebase.database();
   var nodeData = new NodeData(0, 0);
   var subnets = new Array();
   var graphData = new GraphData(new vis.DataSet(), new vis.DataSet(), "graph");
@@ -8,29 +9,46 @@ $(document).ready(function() {
     $("#add-container").toggle();
   });
 
-  $("#add-container").click(function() {
-    $("#export-textarea").hide();
+  $("#button-import-data").click(function() {
+    var saveName = $("#input-import-name")[0].value;
+    var rtnVal = importFromFirebase(saveName);
+    $("#import-save-form").hide();
   });
 
-  $("#export-button").click(exportData);
+  $("#button-change-node").click(changeNodeData);
 
-  $("#import-button").click(importData);
+  $("#export-button").click(function() {
+    exportData();
+    $("#add-container").hide();
+    $("#save-export-form").show();
+  });
 
-  $("#subnet-add-member-button").click(addSubnetMember);
-
-  $("#save-subnet-button").click(function() {
-    saveSubnet();
-    graphData.displayGraph();
+  $("#import-button").click(function() {
+    var importString = $("#export-textarea")[0].value;
+    importData(importString);
+    $("#import-save-form").show();
   });
 
   $("#node-type-dropdown li").click(function() {
     $("#node-type-label").text($(this).text());
   });
 
+  $("#save-export-button").click(function() {
+    saveExport();
+    $("#save-export-form").hide();
+  });
+
   $("#save-node-button").click(function() {
     saveNode();
-    graphData.displayGraph()
+    loadGraph();
   });
+
+  $("#save-subnet-button").click(function() {
+    saveSubnet();
+    loadGraph();
+  });
+
+  $("#subnet-add-member-button").click(addSubnetMember);
 
   function addNodeToSubnet(nodeName, subnetName) {
     subnets.forEach(function(element, index) {
@@ -47,6 +65,44 @@ $(document).ready(function() {
     $(".subnet-member").click(function() {
       this.remove();
     });
+  }
+
+  // Used to apply user events in the graph
+  function applyNetworkHandlers() {
+    graphData.network.on("selectNode", function(params) {
+      changeNode(params.nodes[0]);
+    });
+  }
+
+  // Called when user selects a node in the graph
+  function changeNode(nodeId) {
+    var currNode = graphData.nodes.get(nodeId);
+    $("#change-node-ip-input").attr("placeholder", "Ip: " + currNode.ip);
+    $("#change-node-mac-input").attr("placeholder", "Mac: " + currNode.mac);
+    var net = $(".vis-network");
+    var topOffset = net.offset().top + 32;
+    $("#change-node-form").css({
+      'top': topOffset
+    });
+    $("#change-node-form").show();
+  }
+
+  // Called when the change form "Save" button is clicked
+  function changeNodeData() {
+    var nodeId = graphData.network.getSelection().nodes[0];
+    var newIp = $("#change-node-ip-input")[0].value;
+    var newMac = $("#change-node-mac-input")[0].value;
+    var changedNode = { id: nodeId };
+    if(newIp) {
+      changedNode['ip'] = newIp;
+    }
+    if(newMac) {
+      changedNode['mac'] = newMac;
+    }
+    graphData.nodes.update(changedNode);
+    $("#change-node-form").hide();
+    $("#change-node-ip-input").val('');
+    $("#change-node-mac-input").val('');
   }
 
   function displaySubnetCheckboxes() {
@@ -79,8 +135,8 @@ $(document).ready(function() {
     $("#export-textarea").text(JSON.stringify(exportArray));
   }
 
-  function importData() {
-    importString = $("#export-textarea")[0].value;
+  function importData(importString) {
+    if(!importString) { return; }
     var arr = JSON.parse(importString);
     subnets = new Array();
     graphData = new GraphData(new vis.DataSet(), new vis.DataSet(), 'graph');
@@ -96,6 +152,41 @@ $(document).ready(function() {
     subnets.forEach(function(element, index) {
       graphData.createEdges(element);
       graphData.setNodeGroups(element);
+    });
+    loadGraph();
+  }
+
+  function importFromFirebase(saveName) {
+    var saves = db.ref("saves");
+    return db.ref("saves/" + saveName).once("value").then(function(snapshot) {
+      if(snapshot) {
+        importData(snapshot.val().string);
+      }
+      else {
+        alert("There is no save named " + saveName);
+      }
+    });
+  }
+
+  function loadGraph() {
+    graphData.displayGraph();
+    applyNetworkHandlers();
+  }
+
+  function saveExport() {
+    var exportName = $("#input-save-export")[0].value;
+    var exportJSON = $("#export-textarea")[0].value;
+    var saves = db.ref("saves");
+
+    saves.once("value", function(snapshot) {
+      if(!snapshot.hasChild(exportName)) {
+        db.ref('saves/' + exportName).set({
+          string: exportJSON
+        });
+      }
+      else {
+        alert("That save name is taken.");
+      }
     });
   }
 
@@ -121,7 +212,6 @@ $(document).ready(function() {
       }
     }
 
-    console.log("nodeName: " + nodeName);
     var newNode = new Node(nodeName, nodeType, nodeIp, nodeMac, "default", new Array());
     graphData.addNode(newNode);
 

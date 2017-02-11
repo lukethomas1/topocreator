@@ -7,6 +7,19 @@
 <!-- Local CSS Styling -->
 <link rel="stylesheet" href="./index.css">
 
+<script src="https://www.gstatic.com/firebasejs/3.6.9/firebase.js"></script>
+<script>
+  // Initialize Firebase
+  var config = {
+    apiKey: "AIzaSyBo7i1pJOOyTbMLwOvM4pabOqrGwTEzgCc",
+    authDomain: "gvdb-c4e0c.firebaseapp.com",
+    databaseURL: "https://gvdb-c4e0c.firebaseio.com",
+    storageBucket: "gvdb-c4e0c.appspot.com",
+    messagingSenderId: "235574388268"
+  };
+  firebase.initializeApp(config);
+</script>
+
 <!-- Jquery -->
 <script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
 
@@ -19,9 +32,8 @@
 src="https://cdnjs.cloudflare.com/ajax/libs/vis/4.18.1/vis.min.js"></script>
 
 <!-- Vis.js CSS -->
-<script
-src="https://cdnjs.cloudflare.com/ajax/libs/vis/4.18.1/vis.min.css"
-rel="stylesheet" type="text/css"></script>
+<link rel="stylesheet" type="text/css"
+href="https://cdnjs.cloudflare.com/ajax/libs/vis/4.18.1/vis.min.css">
 
 <title>GrapeVine</title>
 </head>
@@ -71,6 +83,22 @@ rel="stylesheet" type="text/css"></script>
     <div id="subnet-checkboxes"></div>
     <button id="save-node-button" class="btn btn-primary">Save</button>
   </div>
+</div>
+
+<div id="save-export-form" class="add-form centered" hidden>
+  <input id="input-save-export" class="form-control" placeholder="Save Name">
+  <button id="save-export-button" class="btn btn-primary">Save</button>
+</div>
+
+<div id="import-save-form" class="add-form centered" hidden>
+  <input id="input-import-name" class="form-control" placeholder="Import Name">
+  <button id="button-import-data" class="btn btn-primary">Load</button>
+</div>
+
+<div id="change-node-form" hidden>
+  <input id="change-node-ip-input" class="form-control" placeholder="Node IP">
+  <input id="change-node-mac-input" class="form-control" placeholder="Node Mac">
+  <button id="button-change-node" class="btn btn-primary centered">Save</button>
 </div>
 
 <!-- The graph attaches to this div -->

@@ -17,6 +17,13 @@
   text-align: center;
 }
 
+#change-node-form {
+  position: absolute;
+  z-index: 1;
+  border: 1px solid black;
+  text-align: center;
+}
+
 #export-textarea {
   display: block;
   min-height: 50px;
@@ -54,6 +61,10 @@
   position: absolute;
   left: 90%;
   top: 45%;
+}
+
+.centered {
+  margin: 10px auto;
 }
 
 .description {
@@ -104,10 +115,6 @@
 
 .span2 {
   display: inline-block;
-}
-
-.vis-tooltip {
-  position: absolute !important;
 }
 
 li {
