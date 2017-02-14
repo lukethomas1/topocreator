@@ -10,14 +10,15 @@ class GraphData {
     this.nodes = nodes;
     this.edges = edges;
     this.containerId = containerId;
-    this.network = null;
+
+    // Options that effect the cosmetics of the graph
     this.options = {
       interaction:{
         dragNodes:true,
         dragView: true,
         hover: true,
         multiselect: false,
-        navigationButtons: true,
+        navigationButtons: false,
         selectable: true,
         selectConnectedEdges: false,
         tooltipDelay: 300,
@@ -25,17 +26,12 @@ class GraphData {
       },
       layout: {
         improvedLayout:true,
-      },
-      manipulation:{
-        enabled: true,
-        initiallyActive: true,
-        addNode: true,
-        addEdge: false,
-        editEdge: false,
-        deleteNode: true,
-        deleteEdge: false,
       }
     }
+
+    // Creates an empty network to start out
+    var container = document.getElementById("graph");
+    this.network = new vis.Network(container, {nodes: this.nodes, edges: this.edges}, this.options);
   }
 
   addEdge(edge) {
@@ -44,13 +40,6 @@ class GraphData {
 
   addNode(node) {
     this.nodes.update(node);
-  }
-
-  applyEventHandlers() {
-    this.network.on("selectNode", function(params) {
-      this.selectedNode = params.nodes[0];
-      changeNode();
-    });
   }
 
   connectNodeToSubnet(nodeName, subnetName) {
@@ -80,11 +69,10 @@ class GraphData {
     }
   }
 
-  displayGraph() {
-    var container = document.getElementById(this.containerId);
+  updateGraph() {
     var data = {nodes: this.nodes, edges: this.edges};
-    this.network = new vis.Network(container, data, this.options);
-    //this.applyEventHandlers();
+    this.network.setData(data);
+    this.network.redraw();
   }
 
   setNodeGroup(nodeName, groupName) {

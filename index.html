@@ -46,6 +46,10 @@ href="https://cdnjs.cloudflare.com/ajax/libs/vis/4.18.1/vis.min.css">
 
 <body>
 <ul class="nav nav-tabs" role="tablist">
+  <li class="nav-item">
+    <a id="button-hide-show-tabs" class="nav-link"><span class="glyphicon
+        glyphicon-chevron-up"</span></a>
+  </li>
   <li class="nav-item active">
     <a id="add-node-tab" class="nav-link" data-toggle="tab"
       href="#add-node-form" role="tab">Add Node</a>
@@ -54,8 +58,8 @@ href="https://cdnjs.cloudflare.com/ajax/libs/vis/4.18.1/vis.min.css">
     <a id="add-subnet-tab" class="nav-link" data-toggle="tab"
       href="#add-subnet-form" role="tab">Add Subnet</a>
   </li>
-  <li class="nav-itme">
-    <a id="change-subnet-tab" class="nav-link" data-toggle="tab"
+  <li class="nav-item">
+    <a id="edit-subnet-tab" class="nav-link" data-toggle="tab"
       href="#edit-subnet-form" role="tab">Edit Subnets</a>
   </li>
   <li class="nav-item">
@@ -66,50 +70,49 @@ href="https://cdnjs.cloudflare.com/ajax/libs/vis/4.18.1/vis.min.css">
 
 <div class="tab-content">
   <div class="tab-pane active" id="add-node-form" role="tabpanel">
-    <div id="add-node-form" class="add-form">
-      <h1>Add a New Node</h1>
-
-      <!-- Dropdown for node type selection -->
-      <div id="node-type-dropdown" class="form-control dropdown">
-        <div id="node-type-label">Node Type<span class="caret"></span></div>
-        <ul class="dropdown-content">
-          <li>Pi</li>
-          <li>Radio</li>
-        </ul>
-      </div>
-
-      <input id="input-node-name" class="form-control" placeholder="Name (optional)">
-      <input id="input-node-ip" class="form-control" placeholder="IP Address (optional)">
-      <input id="input-node-mac" class="form-control" placeholder="MacAddress (optional)">
+    <div id="add-node-form">
+      <input id="input-node-type" class="form-control inline" placeholder="Node Type">
+      <input id="input-node-name" class="form-control inline" placeholder="Name (optional)">
+      <input id="input-node-ip" class="form-control inline" placeholder="IP Address (optional)">
+      <input id="input-node-mac" class="form-control inline" placeholder="MacAddress (optional)">
       
-      <div id="subnet-checkboxes"></div>
+      <div id="subnet-checkboxes" class="inline"></div>
       <button id="save-node-button" class="btn btn-primary">Save</button>
     </div>
   </div>
 
   <div class="tab-pane" id="add-subnet-form" role="tabpanel">
-    <div class="add-form">
-      <h1>Add a New Subnet</h1>
-      <input id="input-subnet-name" class="form-control" placeholder="Subnet Name">
-      <input id="input-subnet-ssid" class="form-control" placeholder="SSID (optional)">
-      <input id="input-subnet-addr" class="form-control" placeholder="Address (optional)">
-      
-      <div id="subnet-add-member" class="input-append">
-        <input id="subnet-member-input" class="form-control span2" placeholder="Member (optional)">
-        <button id="subnet-add-member-button" class="btn">+</button>
-      </div>
-      <div id="subnet-members"></div>
-
-      <button id="save-subnet-button" class="btn btn-primary">Save</button>
+    <input id="input-subnet-name" class="form-control inline" placeholder="Subnet Name">
+    <input id="input-subnet-ssid" class="form-control inline" placeholder="SSID (optional)">
+    <input id="input-subnet-addr" class="form-control inline" placeholder="Address (optional)">
+    
+    <div id="subnet-add-member" class="input-append inline">
+      <input id="subnet-member-input" class="form-control span2" placeholder="Member (optional)">
+      <button id="subnet-add-member-button" class="btn">+</button>
     </div>
+    <div id="subnet-members" class="inline"></div>
+
+    <button id="save-subnet-button" class="btn btn-primary">Save</button>
   </div>
 
   <div class="tab-pane" id="edit-subnet-form" role="tabpanel">
-    <input id="input-edit-subnet-name" class="form-control" placeholder="Subnet name">
-    <input id="input-edit-subnet-ssid" class="form-control" placeholder="SSID (optional)">
-    <input id="input-edit-subnet-addr" class="form-control"
+    <div class="dropdown inline">
+      <button class="btn btn-secondary dropdown-toggle" type="button"
+      id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true"
+      aria-expanded="false">
+      Subnet Name<span class="caret"></span>
+      </button>
+      <ul id="subnet-dropdowns" class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+        <li href="#test1">test1</li>
+        <li>test2</li>
+      </ul>
+    </div>
+
+    <input id="input-edit-subnet-ssid" class="form-control inline" placeholder="SSID (optional)">
+    <input id="input-edit-subnet-addr" class="form-control inline"
     placeholder="Address (optional)">
     <button id="button-edit-subnet" class="btn btn-primary">Apply Changes</button>
+    <div id="edit-subnet-members"></div>
   </div>
 
   <div class="form-inline my-2 my-lg-0 tab-pane" id="export-import-form" role="tabpanel">
@@ -122,6 +125,8 @@ href="https://cdnjs.cloudflare.com/ajax/libs/vis/4.18.1/vis.min.css">
 <div id="change-node-form" hidden>
   <input id="change-node-ip-input" class="form-control" placeholder="Node IP">
   <input id="change-node-mac-input" class="form-control" placeholder="Node Mac">
+  <button id="button-delete-node" class="btn btn-danger
+    centered">Delete</button>
   <button id="button-change-node" class="btn btn-primary centered">Save</button>
 </div>
 

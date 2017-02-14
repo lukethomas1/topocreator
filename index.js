@@ -4,6 +4,8 @@ $(document).ready(function() {
   var nodeData = new NodeData(0, 0);
   var subnets = new Array();
   var graphData = new GraphData(new vis.DataSet(), new vis.DataSet(), "graph");
+  // Attaches handlers to the graph
+  applyNetworkHandlers();
 
   $("#add-button").click(function() {
     $("#add-container").toggle();
@@ -11,7 +13,16 @@ $(document).ready(function() {
 
   $("#button-change-node").click(changeNodeData);
 
+  $("#button-delete-node").click(deleteSelectedNode);
+
   $("#button-edit-subnet").click(editSubnet);
+
+  $("#button-hide-show-tabs").click(function() {
+    $(".tab-content").toggle();
+    $("#button-hide-show-tabs span").toggleClass("glyphicon-chevron-down glyphicon-chevron-up");
+  });
+
+  $("#edit-subnet-tab").click(loadSubnetDropdowns);
 
   $("#export-button").click(function() {
     var exportName = $("#export-textarea")[0].value;
@@ -34,12 +45,12 @@ $(document).ready(function() {
 
   $("#save-node-button").click(function() {
     saveNode();
-    loadGraph();
+    graphData.updateGraph()
   });
 
   $("#save-subnet-button").click(function() {
     saveSubnet();
-    loadGraph();
+    graphData.updateGraph()
   });
 
   $("#subnet-add-member-button").click(addSubnetMember);
@@ -66,6 +77,9 @@ $(document).ready(function() {
     graphData.network.on("selectNode", function(params) {
       changeNode(params.nodes[0]);
     });
+    graphData.network.on("deselectNode", function() {
+      hideChangeForm()
+    });
   }
 
   // Called when user selects a node in the graph
@@ -79,6 +93,7 @@ $(document).ready(function() {
       'top': topOffset
     });
     $("#change-node-form").show();
+    console.log("showing");
   }
 
   // Called when the change form "Save" button is clicked
@@ -94,9 +109,13 @@ $(document).ready(function() {
       changedNode['mac'] = newMac;
     }
     graphData.nodes.update(changedNode);
-    $("#change-node-form").hide();
-    $("#change-node-ip-input").val('');
-    $("#change-node-mac-input").val('');
+    hideChangeForm();
+  }
+
+  function deleteSelectedNode() {
+    var nodeId = graphData.network.getSelection().nodes[0];
+    graphData.nodes.remove(nodeId);
+    hideChangeForm();
   }
 
   function displaySubnetCheckboxes() {
@@ -125,7 +144,6 @@ $(document).ready(function() {
         exists = true;
         subnets[index].ssid = subSSID;
         subnets[index].addr = subAddr;
-        console.log("subnet " + subName + " changed");
       }
     });
 
@@ -153,6 +171,12 @@ $(document).ready(function() {
     return JSON.stringify(exportArray);
   }
 
+  function hideChangeForm() {
+    $("#change-node-form").hide();
+    $("#change-node-ip-input").val('');
+    $("#change-node-mac-input").val('');
+  }
+
   function importData(importString) {
     var arr = tryParseJSON(importString);
     // If not valid json, it is a save file name
@@ -162,10 +186,15 @@ $(document).ready(function() {
     }
 
     subnets = new Array();
-    graphData = new GraphData(new vis.DataSet(), new vis.DataSet(), 'graph');
+    graphData.nodes = new vis.DataSet();
+    graphData.edges = new vis.DataSet();
 
     arr.forEach(function(element, index) {
       if(element.name) {
+        var array = $.map(element.members, function(value, index) {
+          return [value];
+        });
+        element.members = array;
         subnets.push(element);
       } else {
         graphData.addNode(element);
@@ -176,7 +205,7 @@ $(document).ready(function() {
       graphData.createEdges(element);
       graphData.setNodeGroups(element);
     });
-    loadGraph();
+    graphData.updateGraph()
   }
 
   function importFromFirebase(saveName) {
@@ -191,9 +220,37 @@ $(document).ready(function() {
     });
   }
 
-  function loadGraph() {
-    graphData.displayGraph();
-    applyNetworkHandlers();
+  function loadSubnetDropdowns() {
+    console.log("loading");
+    var dropdownContainer = $("#subnet-dropdowns");
+    var innerHTMLString = "";
+    subnets.forEach(function(subnet, index) {
+      innerHTMLString += '<li><a href="#">' + subnet.name + '</a></li>';
+    });
+    dropdownContainer.html(innerHTMLString);
+
+    $(".dropdown-menu li a").click(function() {
+      var subnetName = $(this).text();
+      $(this).parents(".dropdown").find(".btn").html(subnetName +
+        '<span class="caret"></span>');
+      loadSubnetMembers(subnetName);
+    });
+  }
+
+  function loadSubnetMembers(subnetName) {
+    var thisSubnet = null;
+    subnets.forEach(function(subnet, index) {
+      if(subnet.name == subnetName) {
+        thisSubnet = subnet;
+        subnet.members.forEach(function() { console.log("1")});
+      }
+    });
+
+    var htmlString = "";
+    thisSubnet.members.forEach(function(member, index) {
+      htmlString += '<span class="subnet-member">' + member + '</span>';
+    });
+    $("#edit-subnet-members").html(htmlString);
   }
 
   function saveExport(exportName) {
@@ -217,24 +274,22 @@ $(document).ready(function() {
   }
 
   function saveNode() {
-    var nodeType = $("#node-type-label")[0].innerHTML;
     var nodeName = $("#input-node-name")[0].value;
     var nodeIp = $("#input-node-ip")[0].value;
     var nodeMac = $("#input-node-mac")[0].value;
+    var nodeType = "Pi"; // temporary
 
     if(nodeName == "") {
       // Automatically name the node according to its type
       switch(nodeType) {
-        case "Pi":
-          nodeData.numPis++;
-          nodeName = "pi" + nodeData.numPis;
-          break;
         case "Radio":
           nodeData.numRadios++;
           nodeName = "radio" + nodeData.numRadios;
           break;
         default:
-          return;
+          nodeData.numPis++;
+          nodeName = "pi" + nodeData.numPis;
+          break;
       }
     }
 

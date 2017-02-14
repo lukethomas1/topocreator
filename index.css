@@ -1,9 +1,28 @@
+#button-hide-show-tabs {
+  float: left;
+}
+
+#button-hide-show-tabs:hover {
+  background-color: #83a3c3;
+}
+
 #change-node-form {
   position: absolute;
   z-index: 1;
   border: 1px solid black;
   text-align: center;
   background-color: #d3d3d3;
+}
+
+#edit-subnet-members {
+  width: 100%;
+  border: 1px solid black;
+  padding: 3px;
+  margin: 3px;
+}
+
+#export-textarea {
+  display: inline-block;
 }
 
 #graph {
@@ -65,6 +84,8 @@
   background-color: #f9f9f9;
   list-style-type: none;
   margin: 0;
+  position: absolute;
+  z-index: 1;
 }
 
 .dropdown-content li {
@@ -86,6 +107,11 @@
   margin: 10px auto;
 }
 
+.inline {
+  display: inline-block;
+  max-width: 200px;
+}
+
 .main-body {
   width: 40%;
   margin: 10px 5%;
@@ -99,19 +125,20 @@
 }
 
 .subnet-member {
-  width: 45%;
-  margin: 10px auto;
+  margin: 2px;
+  padding: 2px;
   background-color: #bcd6ff;
   height: 34px;
   border: 1px solid #ccc;
   border-radius: 4px;
+  display: inline-block;
 }
 
 .span2 {
   display: inline-block;
 }
 
-.vis-tooltip {
-  position: absolute !important;
+.vis-network {
+  border: 2px solid rgba(96, 16, 34, .5);
 }
 
