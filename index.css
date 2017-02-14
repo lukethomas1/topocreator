@@ -1,38 +1,19 @@
-#add-container {
-  width: 100%;
-}
-
-#add-subnet-form {
-  float: left;
-}
-
-#add-node-form {
-  float: right;
-}
-
-#buttons {
-  width: 50%;
-  margin: 10px auto;
-  padding: 10px;
-  text-align: center;
-}
-
 #change-node-form {
   position: absolute;
   z-index: 1;
   border: 1px solid black;
   text-align: center;
-}
-
-#export-textarea {
-  display: block;
-  min-height: 50px;
-  min-width: 50%;
-  margin: 10px auto;
+  background-color: #d3d3d3;
 }
 
 #graph {
   height: 80vh;
+}
+
+#import-form {
+  width: 50%;
+  margin: 10px auto;
+  text-align: center;
 }
 
 #nodes {
@@ -43,7 +24,6 @@
   width: 10vw;
   height: 10vh;
   border: solid 1px black;
-  background-color: #d3d3d3;
 }
 
 #subnets {
@@ -87,6 +67,20 @@
   margin: 0;
 }
 
+.dropdown-content li {
+  padding: 10px;
+  width: 100%;
+  border-top: 1px solid gray;
+}
+
+.dropdown-content li:first-child {
+  border: none;
+}
+
+.dropdown-content li:hover {
+  background-color: gray;
+}
+
 .form-control {
   width: 50%;
   margin: 10px auto;
@@ -121,21 +115,3 @@
   position: absolute !important;
 }
 
-li {
-  padding: 10px;
-  width: 100%;
-  border-top: 1px solid gray;
-}
-
-li:first-child {
-  border: none;
-}
-
-li:hover {
-  background-color: gray;
-}
-
-ul {
-  padding: 0;
-  margin: 0;
-}

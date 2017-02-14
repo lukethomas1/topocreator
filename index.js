@@ -9,24 +9,18 @@ $(document).ready(function() {
     $("#add-container").toggle();
   });
 
-  $("#button-import-data").click(function() {
-    var saveName = $("#input-import-name")[0].value;
-    var rtnVal = importFromFirebase(saveName);
-    $("#import-save-form").hide();
-  });
-
   $("#button-change-node").click(changeNodeData);
 
+  $("#button-edit-subnet").click(editSubnet);
+
   $("#export-button").click(function() {
-    exportData();
-    $("#add-container").hide();
-    $("#save-export-form").show();
+    var exportName = $("#export-textarea")[0].value;
+    saveExport(exportName);
   });
 
   $("#import-button").click(function() {
     var importString = $("#export-textarea")[0].value;
     importData(importString);
-    $("#import-save-form").show();
   });
 
   $("#node-type-dropdown li").click(function() {
@@ -120,24 +114,53 @@ $(document).ready(function() {
     });
   }
 
+  function editSubnet() {
+    var subName = $("#input-edit-subnet-name")[0].value;
+    var subSSID = $("#input-edit-subnet-ssid")[0].value;
+    var subAddr = $("#input-edit-subnet-addr")[0].value;
+    var exists = false;
+
+    subnets.forEach(function(subnet, index) {
+      if(subnet.name == subName) {
+        exists = true;
+        subnets[index].ssid = subSSID;
+        subnets[index].addr = subAddr;
+        console.log("subnet " + subName + " changed");
+      }
+    });
+
+    if(!exists) {
+      alert("Subnet " + subName + " doesn't exist.");
+    }
+  }
+
   function exportData() {
+    var exportString = getExportString();
+    // Write data to developer console in browser
+    console.log(exportString);
+    $("#export-textarea").val(exportString);
+  }
+
+  // Returns a json string representing the current topology
+  function getExportString() {
     var exportArray = new Array();
     subnets.forEach(function(subnet, index) {
-      console.log(subnet);
       exportArray.push(subnet);
     });
     graphData.nodes.forEach(function(node, index) {
       exportArray.push(node);
     });
-
-    // Write data to developer console in browser
-    console.log(JSON.stringify(exportArray));
-    $("#export-textarea").text(JSON.stringify(exportArray));
+    return JSON.stringify(exportArray);
   }
 
   function importData(importString) {
-    if(!importString) { return; }
-    var arr = JSON.parse(importString);
+    var arr = tryParseJSON(importString);
+    // If not valid json, it is a save file name
+    if(!arr) {
+      importFromFirebase(importString);
+      return;
+    }
+
     subnets = new Array();
     graphData = new GraphData(new vis.DataSet(), new vis.DataSet(), 'graph');
 
@@ -158,12 +181,12 @@ $(document).ready(function() {
 
   function importFromFirebase(saveName) {
     var saves = db.ref("saves");
-    return db.ref("saves/" + saveName).once("value").then(function(snapshot) {
-      if(snapshot) {
+    db.ref("saves/" + saveName).once("value").then(function(snapshot) {
+      if(snapshot.val()) {
         importData(snapshot.val().string);
       }
       else {
-        alert("There is no save named " + saveName);
+        alert("Invalid JSON / No save named " + saveName);
       }
     });
   }
@@ -173,9 +196,12 @@ $(document).ready(function() {
     applyNetworkHandlers();
   }
 
-  function saveExport() {
-    var exportName = $("#input-save-export")[0].value;
-    var exportJSON = $("#export-textarea")[0].value;
+  function saveExport(exportName) {
+    if(exportName == "") { 
+      exportData();
+      return;
+    }
+    var exportJSON = getExportString();
     var saves = db.ref("saves");
 
     saves.once("value", function(snapshot) {
@@ -247,5 +273,17 @@ $(document).ready(function() {
     // Add a new checkbox for node creation
     displaySubnetCheckboxes();
     $("#subnet-members").html("");
+  }
+
+  function tryParseJSON(string) {
+    try {
+      var object = JSON.parse(string);
+      
+      if(object && typeof(object) === "object") {
+        return object;
+      }
+    }
+    catch(e) {}
+    return false;
   }
 });

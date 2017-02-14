@@ -23,6 +23,12 @@
 <!-- Jquery -->
 <script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
 
+<!-- Bootstrap JavaScript -->
+<script
+src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"
+integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa"
+crossorigin="anonymous"></script>
+
 <!-- Local JavaScript -->
 <script src="./index.js"></script>
 <script src="./objects.js"></script>
@@ -39,61 +45,79 @@ href="https://cdnjs.cloudflare.com/ajax/libs/vis/4.18.1/vis.min.css">
 </head>
 
 <body>
-<textarea id="export-textarea" placeholder="Import/Export text goes here">
-</textarea>
+<ul class="nav nav-tabs" role="tablist">
+  <li class="nav-item active">
+    <a id="add-node-tab" class="nav-link" data-toggle="tab"
+      href="#add-node-form" role="tab">Add Node</a>
+  </li>
+  <li class="nav-item">
+    <a id="add-subnet-tab" class="nav-link" data-toggle="tab"
+      href="#add-subnet-form" role="tab">Add Subnet</a>
+  </li>
+  <li class="nav-itme">
+    <a id="change-subnet-tab" class="nav-link" data-toggle="tab"
+      href="#edit-subnet-form" role="tab">Edit Subnets</a>
+  </li>
+  <li class="nav-item">
+    <a id="export-import-tab" class="nav-link" data-toggle="tab"
+      href="#export-import-form" role="tab">Export/Import</a>
+  </li>
+</ul>
 
-<div id="buttons">
-  <button id="add-button" class="btn btn-primary">Add</button>
-  <button id="import-button" class="btn btn-warning">Import</button>
-  <button id="export-button" class="btn btn-warning">Export</button>
-</div>
+<div class="tab-content">
+  <div class="tab-pane active" id="add-node-form" role="tabpanel">
+    <div id="add-node-form" class="add-form">
+      <h1>Add a New Node</h1>
 
-<div id="add-container" hidden>
-  <div id="add-subnet-form" class="add-form">
-    <h1>Add a New Subnet</h1>
-    <input id="input-subnet-name" class="form-control" placeholder="Subnet Name">
-    <input id="input-subnet-ssid" class="form-control" placeholder="SSID (optional)">
-    <input id="input-subnet-addr" class="form-control" placeholder="Address (optional)">
-    
-    <div id="subnet-add-member" class="input-append">
-      <input id="subnet-member-input" class="form-control span2" placeholder="Member (optional)">
-      <button id="subnet-add-member-button" class="btn">+</button>
+      <!-- Dropdown for node type selection -->
+      <div id="node-type-dropdown" class="form-control dropdown">
+        <div id="node-type-label">Node Type<span class="caret"></span></div>
+        <ul class="dropdown-content">
+          <li>Pi</li>
+          <li>Radio</li>
+        </ul>
+      </div>
+
+      <input id="input-node-name" class="form-control" placeholder="Name (optional)">
+      <input id="input-node-ip" class="form-control" placeholder="IP Address (optional)">
+      <input id="input-node-mac" class="form-control" placeholder="MacAddress (optional)">
+      
+      <div id="subnet-checkboxes"></div>
+      <button id="save-node-button" class="btn btn-primary">Save</button>
     </div>
-    <div id="subnet-members"></div>
-
-    <button id="save-subnet-button" class="btn btn-primary">Save</button>
   </div>
 
-  <div id="add-node-form" class="add-form">
-    <h1>Add a New Node</h1>
+  <div class="tab-pane" id="add-subnet-form" role="tabpanel">
+    <div class="add-form">
+      <h1>Add a New Subnet</h1>
+      <input id="input-subnet-name" class="form-control" placeholder="Subnet Name">
+      <input id="input-subnet-ssid" class="form-control" placeholder="SSID (optional)">
+      <input id="input-subnet-addr" class="form-control" placeholder="Address (optional)">
+      
+      <div id="subnet-add-member" class="input-append">
+        <input id="subnet-member-input" class="form-control span2" placeholder="Member (optional)">
+        <button id="subnet-add-member-button" class="btn">+</button>
+      </div>
+      <div id="subnet-members"></div>
 
-    <!-- Dropdown for node type selection -->
-    <div id="node-type-dropdown" class="form-control dropdown">
-      <div id="node-type-label">Node Type<span class="caret"></span></div>
-      <ul class="dropdown-content">
-        <li>Pi</li>
-        <li>Radio</li>
-      </ul>
+      <button id="save-subnet-button" class="btn btn-primary">Save</button>
     </div>
-
-    <input id="input-node-name" class="form-control" placeholder="Name (optional)">
-    <input id="input-node-ip" class="form-control" placeholder="IP Address (optional)">
-    <input id="input-node-mac" class="form-control" placeholder="MacAddress (optional)">
-    
-    <div id="subnet-checkboxes"></div>
-    <button id="save-node-button" class="btn btn-primary">Save</button>
   </div>
-</div>
 
-<div id="save-export-form" class="add-form centered" hidden>
-  <input id="input-save-export" class="form-control" placeholder="Save Name">
-  <button id="save-export-button" class="btn btn-primary">Save</button>
-</div>
+  <div class="tab-pane" id="edit-subnet-form" role="tabpanel">
+    <input id="input-edit-subnet-name" class="form-control" placeholder="Subnet name">
+    <input id="input-edit-subnet-ssid" class="form-control" placeholder="SSID (optional)">
+    <input id="input-edit-subnet-addr" class="form-control"
+    placeholder="Address (optional)">
+    <button id="button-edit-subnet" class="btn btn-primary">Apply Changes</button>
+  </div>
 
-<div id="import-save-form" class="add-form centered" hidden>
-  <input id="input-import-name" class="form-control" placeholder="Import Name">
-  <button id="button-import-data" class="btn btn-primary">Load</button>
-</div>
+  <div class="form-inline my-2 my-lg-0 tab-pane" id="export-import-form" role="tabpanel">
+    <button id="import-button" class="btn btn-warning">Import</button>
+    <input id="export-textarea" class="form-control mr-sm-2" type="text" placeholder="Save file or JSON">
+    <button id="export-button" class="btn btn-warning">Export</button>
+  </div>
+</div> <!-- END tab-content div -->
 
 <div id="change-node-form" hidden>
   <input id="change-node-ip-input" class="form-control" placeholder="Node IP">
