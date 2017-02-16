@@ -103,8 +103,6 @@ href="https://cdnjs.cloudflare.com/ajax/libs/vis/4.18.1/vis.min.css">
       Subnet Name<span class="caret"></span>
       </button>
       <ul id="subnet-dropdowns" class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-        <li href="#test1">test1</li>
-        <li>test2</li>
       </ul>
     </div>
 
@@ -112,7 +110,9 @@ href="https://cdnjs.cloudflare.com/ajax/libs/vis/4.18.1/vis.min.css">
     <input id="input-edit-subnet-addr" class="form-control inline"
     placeholder="Address (optional)">
     <button id="button-edit-subnet" class="btn btn-primary">Apply Changes</button>
-    <div id="edit-subnet-members"></div>
+    <table class="member-table">
+      <tr></tr>
+    </table>
   </div>
 
   <div class="form-inline my-2 my-lg-0 tab-pane" id="export-import-form" role="tabpanel">

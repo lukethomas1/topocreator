@@ -152,6 +152,22 @@ $(document).ready(function() {
     }
   }
 
+  function editSubnetMemberClicked(e) {
+    // turn background green
+    $(this).toggleClass("member-selected");
+    // if we just added the member-selected class, add the node to the subnet
+    if($(this).hasClass("member-selected")) {
+      e.data.subnet.addNode($(this).text());
+    }
+    // otherwise remove the node from the subnet
+    else {
+      // find where the member is in the subnet.members array
+      var index = e.data.subnet.members.indexOf($(this).text());
+      // remove the member
+      e.data.subnet.members.splice(index, 1);
+    }
+  }
+
   function exportData() {
     var exportString = getExportString();
     // Write data to developer console in browser
@@ -221,7 +237,6 @@ $(document).ready(function() {
   }
 
   function loadSubnetDropdowns() {
-    console.log("loading");
     var dropdownContainer = $("#subnet-dropdowns");
     var innerHTMLString = "";
     subnets.forEach(function(subnet, index) {
@@ -238,19 +253,40 @@ $(document).ready(function() {
   }
 
   function loadSubnetMembers(subnetName) {
+    // Find the correct subnet in the global subnets array
     var thisSubnet = null;
     subnets.forEach(function(subnet, index) {
       if(subnet.name == subnetName) {
         thisSubnet = subnet;
-        subnet.members.forEach(function() { console.log("1")});
       }
     });
 
-    var htmlString = "";
-    thisSubnet.members.forEach(function(member, index) {
-      htmlString += '<span class="subnet-member">' + member + '</span>';
+    // display all of the nodes
+    var table = $(".member-table")[0];
+    var newRow = document.createElement("tr");
+    graphData.nodes.forEach(function(node, index) {
+      // Make a new row every 5 nodes
+      if((index + 1) % 5 == 0) {
+        table.appendChild(newRow);
+        newRow = document.createElement("tr");
+      }
+      var newData = document.createElement("td");
+      var nodeName = node.id;
+      newData.className = "member-data";
+      // If its in the subnet, make it already selected
+      if($.inArray(nodeName, thisSubnet.members) > -1) {
+        newData.className += " member-selected";
+        console.log(nodeName + " is in " + thisSubnet.name);
+        console.log(thisSubnet.members);
+      }
+      var tNode = document.createTextNode(nodeName);
+      newData.appendChild(tNode);
+      newRow.appendChild(newData);
     });
-    $("#edit-subnet-members").html(htmlString);
+    table.appendChild(newRow);
+
+    // Add a handler to each table data
+    $(".member-data").click({subName: subnetName, subnet: thisSubnet}, editSubnetMemberClicked);
   }
 
   function saveExport(exportName) {
