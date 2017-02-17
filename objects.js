@@ -1,3 +1,21 @@
+class DataHolder {
+  constructor(nodes, subnets, edges) {
+    this.nodes = nodes;
+    this.subnets = subnets;
+    this.edges = edges;
+  }
+
+  findSubnet(subnetName) {
+    var found = null;
+    $.each(this.subnets, function(index, subnet) {
+      if(subnet.name == subnetName) {
+        found = subnet;
+      }
+    });
+    return found;
+  }
+}
+
 class Edge {
   constructor(from, to) {
     this.from = from;
@@ -60,6 +78,16 @@ class GraphData {
     });
   }
 
+  // Create edges for all subnets passed in
+  createAllEdges(subnetArray) {
+    var jankreference = this;
+    this.edges = new vis.DataSet(); // reset all edges
+    $.each(subnetArray, function(index, subnet) {
+      jankreference.createEdges(subnet);
+    });
+  }
+
+  // Create an edge from every member of the subnet to every other member
   createEdges(subnet) {
     for(var i = 0; i < subnet.members.length; i++) {
       for(var j = i + 1; j < subnet.members.length; j++) {
@@ -69,19 +97,24 @@ class GraphData {
     }
   }
 
-  updateGraph() {
+  // Redraws the graph, will remake edges if subnetArray is supplied
+  updateGraph(subnetArray) {
+    if(subnetArray) {
+      this.createAllEdges(subnetArray);
+      this.setAllNodeGroups(subnetArray);
+    }
     var data = {nodes: this.nodes, edges: this.edges};
     this.network.setData(data);
     this.network.redraw();
   }
 
-  setNodeGroup(nodeName, groupName) {
-    var newNode = {id: nodeName, group: groupName};
-    this.nodes.update(newNode);
+  setAllNodeGroups(subnetArray) {
+    var jankreference = this;
+    $.each(subnetArray, function(index, subnet) {
+      jankreference.setNodeGroups(subnet);
+    });
   }
 
-  // Used for when a new subnet is made, adds edges between all nodes in subnet
-  // Also sets some nodes to the group "gateway" if they are in 2+ subnets
   setNodeGroups(subnet) {
     var newNodes = [];
     var jankreference = this;

@@ -1,7 +1,7 @@
 $(document).ready(function() {
   // Global variables
   var db = firebase.database();
-  var nodeData = new NodeData(0, 0);
+  var dataHolder = new DataHolder(new vis.DataSet(), new Array(), new vis.DataSet());
   var subnets = new Array();
   var graphData = new GraphData(new vis.DataSet(), new vis.DataSet(), "graph");
   // Attaches handlers to the graph
@@ -22,7 +22,10 @@ $(document).ready(function() {
     $("#button-hide-show-tabs span").toggleClass("glyphicon-chevron-down glyphicon-chevron-up");
   });
 
-  $("#edit-subnet-tab").click(loadSubnetDropdowns);
+  $("#edit-subnet-tab").click(function() {
+    loadSubnetDropdowns();
+    loadMemberTable();
+  });
 
   $("#export-button").click(function() {
     var exportName = $("#export-textarea")[0].value;
@@ -53,22 +56,11 @@ $(document).ready(function() {
     graphData.updateGraph()
   });
 
-  $("#subnet-add-member-button").click(addSubnetMember);
-
   function addNodeToSubnet(nodeName, subnetName) {
     subnets.forEach(function(element, index) {
       if(element.name == subnetName) {
         subnets[index].addNode(nodeName); 
       }
-    });
-  }
-
-  function addSubnetMember() {
-    var memberName = $("#subnet-member-input").val();
-    var htmlString = '<p class="subnet-member">Node: ' + memberName + "</p>";
-    $("#subnet-members").append(htmlString);
-    $(".subnet-member").click(function() {
-      this.remove();
     });
   }
 
@@ -93,7 +85,6 @@ $(document).ready(function() {
       'top': topOffset
     });
     $("#change-node-form").show();
-    console.log("showing");
   }
 
   // Called when the change form "Save" button is clicked
@@ -134,22 +125,24 @@ $(document).ready(function() {
   }
 
   function editSubnet() {
-    var subName = $("#input-edit-subnet-name")[0].value;
+    var subName = $("#button-dropdown-edit-subnet").text();
     var subSSID = $("#input-edit-subnet-ssid")[0].value;
     var subAddr = $("#input-edit-subnet-addr")[0].value;
-    var exists = false;
+    var thisSubnet = null;
 
     subnets.forEach(function(subnet, index) {
       if(subnet.name == subName) {
-        exists = true;
-        subnets[index].ssid = subSSID;
-        subnets[index].addr = subAddr;
+        thisSubnet = subnet;
       }
     });
 
-    if(!exists) {
-      alert("Subnet " + subName + " doesn't exist.");
+    if(subSSID) {
+      thisSubnet.ssid = subSSID;
     }
+    if(subAddr) {
+      thisSubnet.addr = subAddr;
+    }
+    graphData.updateGraph(subnets);
   }
 
   function editSubnetMemberClicked(e) {
@@ -166,6 +159,7 @@ $(document).ready(function() {
       // remove the member
       e.data.subnet.members.splice(index, 1);
     }
+    graphData.updateGraph(subnets);
   }
 
   function exportData() {
@@ -207,21 +201,18 @@ $(document).ready(function() {
 
     arr.forEach(function(element, index) {
       if(element.name) {
-        var array = $.map(element.members, function(value, index) {
+        var membersArray = $.map(element.members, function(value, index) {
           return [value];
         });
-        element.members = array;
-        subnets.push(element);
+        var subnet = new Subnet(element.name, element.ssid, element.addr, membersArray);
+        subnets.push(subnet);
       } else {
-        graphData.addNode(element);
+        var node = new Node(element.id, element.type, element.ip, element.mac, element.group);
+        graphData.addNode(node);
       }
     });
 
-    subnets.forEach(function(element, index) {
-      graphData.createEdges(element);
-      graphData.setNodeGroups(element);
-    });
-    graphData.updateGraph()
+    graphData.updateGraph(subnets);
   }
 
   function importFromFirebase(saveName) {
@@ -236,6 +227,29 @@ $(document).ready(function() {
     });
   }
 
+  // Create a table with all the nodes
+  // Called when the "Edit Subnets" tab is chosen
+  function loadMemberTable() {
+    var table = $(".member-table")[0];
+    $(table).empty();
+    var newRow = document.createElement("tr");
+    graphData.nodes.forEach(function(node, index) {
+      // Make a new row every 5 nodes
+      if((index + 1) % 5 == 0) {
+        table.appendChild(newRow);
+        newRow = document.createElement("tr");
+      }
+      var newData = document.createElement("td");
+      var nodeName = node.id;
+      newData.className = "member-data";
+      var tNode = document.createTextNode(nodeName);
+      newData.appendChild(tNode);
+      newRow.appendChild(newData);
+    });
+    table.appendChild(newRow);
+  }
+
+  // Called when the "Edit Subnets" tab is chosen
   function loadSubnetDropdowns() {
     var dropdownContainer = $("#subnet-dropdowns");
     var innerHTMLString = "";
@@ -252,41 +266,23 @@ $(document).ready(function() {
     });
   }
 
+  // Called when a specific subnet is chosen from the dropdown
   function loadSubnetMembers(subnetName) {
-    // Find the correct subnet in the global subnets array
-    var thisSubnet = null;
-    subnets.forEach(function(subnet, index) {
-      if(subnet.name == subnetName) {
-        thisSubnet = subnet;
+    dataHolder.subnets = subnets;
+    var subnet = dataHolder.findSubnet(subnetName);
+    var members = $(".member-data");
+    $.each(members, function(index, member) {
+      if($.inArray($(member).text(), subnet.members) > -1) {
+        members[index].className = "member-data member-selected";
+      }
+      else {
+        members[index].className = "member-data";
       }
     });
-
-    // display all of the nodes
-    var table = $(".member-table")[0];
-    var newRow = document.createElement("tr");
-    graphData.nodes.forEach(function(node, index) {
-      // Make a new row every 5 nodes
-      if((index + 1) % 5 == 0) {
-        table.appendChild(newRow);
-        newRow = document.createElement("tr");
-      }
-      var newData = document.createElement("td");
-      var nodeName = node.id;
-      newData.className = "member-data";
-      // If its in the subnet, make it already selected
-      if($.inArray(nodeName, thisSubnet.members) > -1) {
-        newData.className += " member-selected";
-        console.log(nodeName + " is in " + thisSubnet.name);
-        console.log(thisSubnet.members);
-      }
-      var tNode = document.createTextNode(nodeName);
-      newData.appendChild(tNode);
-      newRow.appendChild(newData);
-    });
-    table.appendChild(newRow);
-
+    // Clear handlers on the boxes before adding new ones
+    members.off();
     // Add a handler to each table data
-    $(".member-data").click({subName: subnetName, subnet: thisSubnet}, editSubnetMemberClicked);
+    members.click({subName: subnetName, subnet: subnet}, editSubnetMemberClicked);
   }
 
   function saveExport(exportName) {
