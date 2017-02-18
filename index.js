@@ -4,7 +4,6 @@ $(document).ready(function() {
   var dataHolder = new DataHolder(new vis.DataSet(), new Array(), new vis.DataSet());
   var subnets = new Array();
   var graphData = new GraphData(new vis.DataSet(), new vis.DataSet(), "graph");
-  console.log(graphData.network.groups);
   // Attaches handlers to the graph
   applyNetworkHandlers();
 
@@ -160,7 +159,7 @@ $(document).ready(function() {
     else {
       var self = this;
       var arr = e.data.subnet.members;
-      e.data.subnet.members.each(function(index, member) {
+      e.data.subnet.members.forEach(function(member, index) {
         if(member == $(self).text()) {
           arr.splice(index, 1);
         }
@@ -259,11 +258,8 @@ $(document).ready(function() {
   function loadSubnetColorTable() {
     var table = $("#edit-subnet-colors-table");
     var htmlString = "<thead><th>Subnet</th><th>Color</th></thead>";
-    console.log(graphData.network.groups.groups);
-    console.log(subnets);
     subnets.forEach(function(subnet, index) {
       var color = graphData.network.groups.groups[subnet.name].color.background;
-      console.log(color);
       htmlString += '<tr class="color-table-row"><td>' + subnet.name + '</td>';
       htmlString += '<td style="background-color: ' + color + ';">' + color + '</td></tr>';
     });
@@ -366,15 +362,16 @@ $(document).ready(function() {
     var subSSID = $("#input-subnet-ssid")[0].value;
     var subAddr = $("#input-subnet-addr")[0].value;
     var tempMembers = $("#subnet-members .subnet-member");
+    var memberArray = new Array();
 
     if(!subName) {
       return;
     }
 
     tempMembers.each(function(index, member) {
-      tempMembers[index] = member.innerHTML.substring(6);
+      memberArray.push(member.innerHTML.substring(6));
     });
-    var newSubnet = new Subnet(subName, subSSID, subAddr, tempMembers);
+    var newSubnet = new Subnet(subName, subSSID, subAddr, memberArray);
     subnets.push(newSubnet);
     graphData.createEdges(newSubnet);
     graphData.setNodeGroups(newSubnet);
