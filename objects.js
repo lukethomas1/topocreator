@@ -108,11 +108,23 @@ class GraphData {
     this.network.redraw();
   }
 
+  resetNodeGroups() {
+    var jankRef = this;
+    this.nodes.forEach(function(node, index) {
+      jankRef.nodes.update({id: node.id, group: "default"});
+    });
+  }
+
   setAllNodeGroups(subnetArray) {
+    this.resetNodeGroups();
     var jankreference = this;
     $.each(subnetArray, function(index, subnet) {
       jankreference.setNodeGroups(subnet);
     });
+  }
+
+  setNodeGroup(nodeName, groupName) {
+    this.nodes.update({id: nodeName, group: groupName});
   }
 
   setNodeGroups(subnet) {

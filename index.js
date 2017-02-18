@@ -4,6 +4,7 @@ $(document).ready(function() {
   var dataHolder = new DataHolder(new vis.DataSet(), new Array(), new vis.DataSet());
   var subnets = new Array();
   var graphData = new GraphData(new vis.DataSet(), new vis.DataSet(), "graph");
+  console.log(graphData.network.groups);
   // Attaches handlers to the graph
   applyNetworkHandlers();
 
@@ -22,7 +23,10 @@ $(document).ready(function() {
     $("#button-hide-show-tabs span").toggleClass("glyphicon-chevron-down glyphicon-chevron-up");
   });
 
+  $("#edit-subnet-colors-tab").click(loadSubnetColorTable);
+
   $("#edit-subnet-tab").click(function() {
+    $("#button-dropdown-edit-subnet").html('Choose Subnet<span class="caret"></span>');
     loadSubnetDropdowns();
     loadMemberTable();
   });
@@ -154,10 +158,13 @@ $(document).ready(function() {
     }
     // otherwise remove the node from the subnet
     else {
-      // find where the member is in the subnet.members array
-      var index = e.data.subnet.members.indexOf($(this).text());
-      // remove the member
-      e.data.subnet.members.splice(index, 1);
+      var self = this;
+      var arr = e.data.subnet.members;
+      e.data.subnet.members.each(function(index, member) {
+        if(member == $(self).text()) {
+          arr.splice(index, 1);
+        }
+      });
     }
     graphData.updateGraph(subnets);
   }
@@ -247,6 +254,20 @@ $(document).ready(function() {
       newRow.appendChild(newData);
     });
     table.appendChild(newRow);
+  }
+
+  function loadSubnetColorTable() {
+    var table = $("#edit-subnet-colors-table");
+    var htmlString = "<thead><th>Subnet</th><th>Color</th></thead>";
+    console.log(graphData.network.groups.groups);
+    console.log(subnets);
+    subnets.forEach(function(subnet, index) {
+      var color = graphData.network.groups.groups[subnet.name].color.background;
+      console.log(color);
+      htmlString += '<tr class="color-table-row"><td>' + subnet.name + '</td>';
+      htmlString += '<td style="background-color: ' + color + ';">' + color + '</td></tr>';
+    });
+    table.html(htmlString);
   }
 
   // Called when the "Edit Subnets" tab is chosen

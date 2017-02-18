@@ -63,6 +63,10 @@ href="https://cdnjs.cloudflare.com/ajax/libs/vis/4.18.1/vis.min.css">
       href="#edit-subnet-form" role="tab">Edit Subnets</a>
   </li>
   <li class="nav-item">
+    <a id="edit-subnet-colors-tab" class="nav-link" data-toggle="tab"
+      href="#edit-subnet-colors-form" role="tab">Subnet Colors</a>
+  </li>
+  <li class="nav-item">
     <a id="export-import-tab" class="nav-link" data-toggle="tab"
       href="#export-import-form" role="tab">Export/Import</a>
   </li>
@@ -85,13 +89,6 @@ href="https://cdnjs.cloudflare.com/ajax/libs/vis/4.18.1/vis.min.css">
     <input id="input-subnet-name" class="form-control inline" placeholder="Subnet Name">
     <input id="input-subnet-ssid" class="form-control inline" placeholder="SSID (optional)">
     <input id="input-subnet-addr" class="form-control inline" placeholder="Address (optional)">
-    
-    <div id="subnet-add-member" class="input-append inline">
-      <input id="subnet-member-input" class="form-control span2" placeholder="Member (optional)">
-      <button id="subnet-add-member-button" class="btn">+</button>
-    </div>
-    <div id="subnet-members" class="inline"></div>
-
     <button id="save-subnet-button" class="btn btn-primary">Save</button>
   </div>
 
@@ -99,9 +96,7 @@ href="https://cdnjs.cloudflare.com/ajax/libs/vis/4.18.1/vis.min.css">
     <div class="dropdown inline">
       <button class="btn btn-secondary dropdown-toggle" type="button"
       id="button-dropdown-edit-subnet" data-toggle="dropdown" aria-haspopup="true"
-      aria-expanded="false">
-      Subnet Name<span class="caret"></span>
-      </button>
+      aria-expanded="false">Choose Subnet<span class="caret"></span></button>
       <ul id="subnet-dropdowns" class="dropdown-menu"
         aria-labelledby="button-dropdown-edit-subnet">
       </ul>
@@ -113,6 +108,18 @@ href="https://cdnjs.cloudflare.com/ajax/libs/vis/4.18.1/vis.min.css">
     <button id="button-edit-subnet" class="btn btn-primary">Apply Changes</button>
     <table class="member-table">
       <tr></tr>
+    </table>
+  </div>
+
+  <div class="tab-pane" id="edit-subnet-colors-form" role="tabpanel">
+    <table id="edit-subnet-colors-table">
+      <thead>
+        <th>Subnet</th>
+        <th>Color</th>
+      </thead>
+      <tr>
+        <td>test</td>
+        <td class="color-box"></td>
     </table>
   </div>
 
