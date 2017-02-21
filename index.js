@@ -6,6 +6,7 @@ $(document).ready(function() {
   var graphData = new GraphData(new vis.DataSet(), new vis.DataSet(), "graph");
   // Attaches handlers to the graph
   applyNetworkHandlers();
+  importFromFirebase("mostrecentsave");
 
   $("#add-button").click(function() {
     $("#add-container").toggle();
@@ -313,6 +314,9 @@ $(document).ready(function() {
     saves.once("value", function(snapshot) {
       if(!snapshot.hasChild(exportName)) {
         db.ref('saves/' + exportName).set({
+          string: exportJSON
+        });
+        db.ref('saves/mostrecentsave').set({
           string: exportJSON
         });
       }
