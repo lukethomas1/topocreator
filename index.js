@@ -8,9 +8,7 @@ $(document).ready(function() {
   applyNetworkHandlers();
   importFromFirebase("mostrecentsave");
 
-  $("#add-button").click(function() {
-    $("#add-container").toggle();
-  });
+  $("#add-node-tab").click(displaySubnetCheckboxes);
 
   $("#button-change-node").click(changeNodeData);
 
@@ -119,13 +117,10 @@ $(document).ready(function() {
 
     subnets.forEach(function(element, index) {
       htmlString += '<label class="sub-checkbox">';
-      htmlString += '<input type="checkbox" value="' + element.name + '">' + element.name + '</label>';
+      htmlString += '<input type="checkbox" value="' + element.name
+                 + '">' + element.name + '</label>';
     });
     checkboxDiv.html(htmlString);
-
-    $("#add-subnet-form").css("min-height", function() {
-      return $("#add-node-form").height() + 4;
-    });
   }
 
   function editSubnet() {
@@ -219,6 +214,7 @@ $(document).ready(function() {
       }
     });
 
+    displaySubnetCheckboxes();
     graphData.updateGraph(subnets);
   }
 
@@ -365,23 +361,14 @@ $(document).ready(function() {
     var subName = $("#input-subnet-name")[0].value;
     var subSSID = $("#input-subnet-ssid")[0].value;
     var subAddr = $("#input-subnet-addr")[0].value;
-    var tempMembers = $("#subnet-members .subnet-member");
     var memberArray = new Array();
 
     if(!subName) {
       return;
     }
 
-    tempMembers.each(function(index, member) {
-      memberArray.push(member.innerHTML.substring(6));
-    });
     var newSubnet = new Subnet(subName, subSSID, subAddr, memberArray);
     subnets.push(newSubnet);
-    graphData.createEdges(newSubnet);
-    graphData.setNodeGroups(newSubnet);
-    // Add a new checkbox for node creation
-    displaySubnetCheckboxes();
-    $("#subnet-members").html("");
   }
 
   function tryParseJSON(string) {
