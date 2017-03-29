@@ -169,17 +169,24 @@ $(document).ready(function() {
   // Returns a json string representing the current topology
   function getExportString() {
     var exportArray = new Array();
-    counter = 1
-    subnets.forEach(function(subnet, index) {
-      subnet.number = counter
-      counter += 1
-      exportArray.push(subnet);
-    });
-    counter = 1
+    var nodeNumberDict = {};
+
+    counter = 1;
     graphData.nodes.forEach(function(node, index) {
-      node.number = counter
-      counter += 1
+      node.number = counter;
+      nodeNumberDict[node.id] = node.number
       exportArray.push(node);
+      counter += 1;
+    });
+    counter = 1;
+    subnets.forEach(function(subnet, index) {
+      subnet.memberids = []
+      subnet.members.forEach(function(member, index) {
+        subnet.memberids.push(nodeNumberDict[member])
+      });
+      subnet.number = counter;
+      exportArray.push(subnet);
+      counter += 1;
     });
     return JSON.stringify(exportArray);
   }
