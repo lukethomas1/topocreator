@@ -6,7 +6,7 @@ $(document).ready(function() {
   var graphData = new GraphData(new vis.DataSet(), new vis.DataSet(), "graph");
   // Attaches handlers to the graph
   applyNetworkHandlers();
-  importFromFirebase("mostrecentsave");
+  //importFromFirebase("mostrecentsave");
 
   $("#add-node-tab").click(displaySubnetCheckboxes);
 
@@ -41,11 +41,6 @@ $(document).ready(function() {
 
   $("#node-type-dropdown li").click(function() {
     $("#node-type-label").text($(this).text());
-  });
-
-  $("#save-export-button").click(function() {
-    saveExport();
-    $("#save-export-form").hide();
   });
 
   $("#save-node-button").click(function() {
@@ -174,10 +169,16 @@ $(document).ready(function() {
   // Returns a json string representing the current topology
   function getExportString() {
     var exportArray = new Array();
+    counter = 1
     subnets.forEach(function(subnet, index) {
+      subnet.number = counter
+      counter += 1
       exportArray.push(subnet);
     });
+    counter = 1
     graphData.nodes.forEach(function(node, index) {
+      node.number = counter
+      counter += 1
       exportArray.push(node);
     });
     return JSON.stringify(exportArray);

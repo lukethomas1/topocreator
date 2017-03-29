@@ -32,7 +32,7 @@ class GraphData {
     // Options that effect the cosmetics of the graph
     this.options = {
       interaction:{
-        dragNodes:true,
+        dragNodes:false,
         dragView: true,
         hover: true,
         multiselect: false,
