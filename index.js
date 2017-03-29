@@ -102,7 +102,9 @@ $(document).ready(function() {
 
   function deleteSelectedNode() {
     var nodeId = graphData.network.getSelection().nodes[0];
+    console.log(graphData.nodes)
     graphData.nodes.remove(nodeId);
+    console.log(graphData.nodes)
     hideChangeForm();
   }
 
@@ -197,6 +199,7 @@ $(document).ready(function() {
     $("#change-node-mac-input").val('');
   }
 
+  // THERE IS CURRENTLY A BUG WHERE DELETING A NODE, THEN EXPORTING, THEN IMPORTING THAT SAVE, WILL STILL HAVE THE NODE THERE, IT IS BECAUSE THE SUBNETS DONT HAVE THE NODE REMOVED FROM THEIR MEMBERS LIST
   function importData(importString) {
     var arr = tryParseJSON(importString);
     // If not valid json, it is a save file name
@@ -316,16 +319,14 @@ $(document).ready(function() {
     var saves = db.ref("saves");
 
     saves.once("value", function(snapshot) {
-      if(!snapshot.hasChild(exportName)) {
+      if(!snapshot.hasChild(exportName) || confirm("There is an existing save with that name. Overwrite?")) {
+        console.log(exportJSON);
         db.ref('saves/' + exportName).set({
           string: exportJSON
         });
         db.ref('saves/mostrecentsave').set({
           string: exportJSON
         });
-      }
-      else {
-        alert("That save name is taken.");
       }
     });
   }
