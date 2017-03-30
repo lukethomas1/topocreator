@@ -31,8 +31,15 @@ class GraphData {
 
     // Options that effect the cosmetics of the graph
     this.options = {
+      edges: {
+        physics: false,
+        smooth: {
+          type: "continuous",
+          forceDirection: "none"
+        }
+      },
       interaction:{
-        dragNodes:false,
+        dragNodes: false,
         dragView: true,
         hover: true,
         multiselect: false,
@@ -43,7 +50,10 @@ class GraphData {
         zoomView: true
       },
       layout: {
-        improvedLayout:true,
+        improvedLayout: false
+      },
+      physics: {
+        stabilization: false
       }
     }
 

@@ -7,6 +7,22 @@ $(document).ready(function() {
   // Attaches handlers to the graph
   applyNetworkHandlers();
   //importFromFirebase("mostrecentsave");
+  
+  $("#add-node-form").on('keypress', function(e) {
+    // If the enter key is pressed
+    if(e.which == 13) {
+      saveNode();
+      graphData.updateGraph();
+    }
+  });
+
+  $("#add-subnet-form").on('keypress', function(e) {
+    // If the enter key is pressed
+    if(e.which == 13) {
+      saveSubnet();
+      graphData.updateGraph();
+    }
+  });
 
   $("#add-node-tab").click(displaySubnetCheckboxes);
 
@@ -45,12 +61,12 @@ $(document).ready(function() {
 
   $("#save-node-button").click(function() {
     saveNode();
-    graphData.updateGraph()
+    graphData.updateGraph();
   });
 
   $("#save-subnet-button").click(function() {
     saveSubnet();
-    graphData.updateGraph()
+    graphData.updateGraph();
   });
 
   function addNodeToSubnet(nodeName, subnetName) {
