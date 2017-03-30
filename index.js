@@ -1,3 +1,9 @@
+// File: index.js
+// Author: Luke Thomas
+// Date: March 30, 2017
+// Description: This file handles most of the page logic, such as what happens
+// when buttons are pressed. Lots of Vis.js related code, lots of Jquery.
+
 $(document).ready(function() {
   // Global variables
   var db = firebase.database();

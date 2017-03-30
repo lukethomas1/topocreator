@@ -1,3 +1,11 @@
+// File: objects.js
+// Author: Luke Thomas
+// Date: March 30, 2017
+// Description: This file has classes for objects used in index.js, such as
+// Node and Subnet. GraphData is VERY important, has everything to do with
+// Vis.js and the displayed graph. Vis.js has great documentation, go to their
+// website for help.
+
 class DataHolder {
   constructor(nodes, subnets, edges) {
     this.nodes = nodes;
