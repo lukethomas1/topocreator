@@ -1,0 +1,17 @@
+File: README
+Author: Luke Thomas
+Date: March 30, 2017
+Description: README for TopoCreator website
+
+TopoCreator is a web app designed to facilitate network topology creation. It
+uses the vis.js JavaScript library for visualization.
+
+Tips:
+- Create nodes first, then subnets, then put nodes in subnets using the
+  "Edit Subnets" page
+
+- Click on nodes in the graph to edit their information
+
+- Save topologies by "exporting" them; put a save name in the input box and
+  click "Export", if no save name is given the input box will fill with the
+  exported JSON.
