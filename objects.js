@@ -47,7 +47,7 @@ class GraphData {
         }
       },
       interaction:{
-        dragNodes: false,
+        dragNodes: true,
         dragView: true,
         hover: true,
         multiselect: false,
@@ -58,7 +58,7 @@ class GraphData {
         zoomView: true
       },
       layout: {
-        improvedLayout: false
+        improvedLayout: true
       },
       physics: {
         stabilization: false
