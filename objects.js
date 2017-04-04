@@ -126,6 +126,21 @@ class GraphData {
     this.network.redraw();
   }
 
+  removeNode(subnets, nodeId) {
+    this.nodes.remove(nodeId);
+    var jankRef = this;
+    $.each(subnets, function(index, subnet) {
+      jankRef.removeNodeFromSubnetMembers(nodeId, subnet);
+    });
+  }
+
+  removeNodeFromSubnetMembers(nodeId, subnet) {
+    var index = subnet.members.indexOf(nodeId);
+    if(index >= 0) {
+      subnet.members.splice(index, 1);
+    }
+  }
+
   resetNodeGroups() {
     var jankRef = this;
     this.nodes.forEach(function(node, index) {

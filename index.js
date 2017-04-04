@@ -124,9 +124,7 @@ $(document).ready(function() {
 
   function deleteSelectedNode() {
     var nodeId = graphData.network.getSelection().nodes[0];
-    console.log(graphData.nodes)
-    graphData.nodes.remove(nodeId);
-    console.log(graphData.nodes)
+    graphData.removeNode(subnets, nodeId);
     hideChangeForm();
   }
 
