@@ -219,7 +219,6 @@ $(document).ready(function() {
     $("#change-node-mac-input").val('');
   }
 
-  // THERE IS CURRENTLY A BUG WHERE DELETING A NODE, THEN EXPORTING, THEN IMPORTING THAT SAVE, WILL STILL HAVE THE NODE THERE, IT IS BECAUSE THE SUBNETS DONT HAVE THE NODE REMOVED FROM THEIR MEMBERS LIST
   function importData(importString) {
     var arr = tryParseJSON(importString);
     // If not valid json, it is a save file name
