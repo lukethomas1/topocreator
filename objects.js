@@ -61,7 +61,7 @@ class GraphData {
         improvedLayout: true
       },
       physics: {
-        stabilization: false
+        enabled: false
       }
     }
 
