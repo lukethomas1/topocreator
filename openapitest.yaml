@@ -1,0 +1,111 @@
+openapi: 3.0.0
+
+info:
+	title: Grapevine User API
+	description: JSON API for controlling the Grapevine service
+	version 0.1.1
+
+servers:
+url: http://127.0.0.1:22124
+	description: When Grapevine is running, the API is on localhost port 22124
+
+paths:
+/messages/{messageId}:
+	get:
+		summary: Returns a boolean
+		description: Check if Grapevine has a message
+		parameters:
+			- name: messageId
+			  in: path
+			  required: true
+			  description: Id of message to check
+			  schema:
+				type: string
+		responses:
+			‘151’:
+				description: True
+			‘150’:
+				description: False
+			‘152’:
+				description: Error
+/messages/send
+	post:
+		summary: Send a message
+		requestBody:
+			required: true
+			content:
+				application/json:
+					schema:
+						type: object
+						properties:
+							channel:
+								type: string
+							payload:
+								type: string
+								format: byte  #base64
+							lifetime:
+								type: integer
+							pushMode:
+								type: boolean
+		responses:
+			‘151’:
+				description: Success
+			‘150’:
+				description: Failure
+			‘152’:
+				description: Error
+
+/channels/{channel}
+	get:
+		summary: Check if Grapevine is subscribed to a channel
+		parameters:
+			- name: channel
+			  in: path
+			  required: true
+			  description: channel to check if Grapevine is subscribed to
+			  schema:
+				type: string
+responses:
+			‘151’:
+				description: True
+			‘150’:
+				description: False
+			‘152’:
+				description: Error
+
+	post:
+		summary: Subscribe or unsubscribe from a channel
+		parameters:
+			- name: channel
+			  required: true
+			  description: channel to subscribe to or unsubscribe from
+			  schema:
+				type: string
+		requestBody:
+			required: true
+			content:
+				application/json:
+					schema:
+						type: object
+						properties:
+							subscribe:
+								type: boolean
+		responses:
+			‘151’:
+				description: Success
+			‘150’:
+				description: Failure
+			‘152’:
+				description: Error
+
+/manage/shutdown
+	post:
+		summary: Shut down the Grapevine service
+		responses:
+			‘151’:
+				description: Success
+			‘150’:
+				description: Failure
+			‘152’:
+				description: Error
+		
